@@ -5,6 +5,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { RouterProvider } from 'react-router-dom';
 
 import Guard from './components/auth/Guard';
+import Header from './components/header/Header';
+import SimpleSnackbar from './components/snackbar/SnackBar';
 import client from './constants/apollo-client';
 import router from './router';
 
@@ -19,11 +21,13 @@ function App() {
     <ApolloProvider client={client}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
+        <Header />
         <Container>
           <Guard>
             <RouterProvider router={router} />
           </Guard>
         </Container>
+        <SimpleSnackbar />
       </ThemeProvider>
     </ApolloProvider>
   );
