@@ -2,9 +2,10 @@ import { ReactNode, useEffect } from 'react';
 
 import { authenticatedVar } from 'src/constants/authenticated';
 import { UNKNOWN_ERROR_SNACK_MESSAGE } from 'src/constants/errors';
+import excludedRoutes from 'src/constants/excluded-routes';
 import { snackVar } from 'src/constants/snack';
-import excludedRoutes from '../../constants/excluded-routes';
-import { useGetMe } from '../../hooks/useGetMe';
+import { useGetMe } from 'src/hooks/useGetMe';
+import { usePath } from 'src/hooks/usePath';
 
 interface Props {
   children: ReactNode;
@@ -12,6 +13,7 @@ interface Props {
 
 const Guard = ({ children }: Props) => {
   const { data: user, error } = useGetMe();
+  const { path } = usePath();
 
   useEffect(() => {
     if (user) authenticatedVar(true);
@@ -23,7 +25,7 @@ const Guard = ({ children }: Props) => {
     }
   }, [error]);
 
-  return <>{excludedRoutes.includes(window.location.pathname) ? children : user && children}</>;
+  return <>{excludedRoutes.includes(path) ? children : user && children}</>;
 };
 
 export default Guard;
