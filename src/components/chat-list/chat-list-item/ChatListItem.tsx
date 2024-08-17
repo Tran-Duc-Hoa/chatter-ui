@@ -5,7 +5,11 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 
-const ChatListItem = () => {
+interface Props {
+  name?: string;
+}
+
+const ChatListItem = ({ name }: Props) => {
   return (
     <>
       <ListItem alignItems='flex-start'>
@@ -13,7 +17,7 @@ const ChatListItem = () => {
           <Avatar alt='Remy Sharp' src='/static/images/avatar/1.jpg' />
         </ListItemAvatar>
         <ListItemText
-          primary='Brunch this weekend?'
+          primary={name}
           secondary={
             <>
               <Typography sx={{ display: 'inline' }} component='span' variant='body2' color='text.primary'>

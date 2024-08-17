@@ -14,6 +14,8 @@ import {
   TextField
 } from '@mui/material';
 import { useState } from 'react';
+import { UNKNOWN_ERROR_MESSAGE } from 'src/constants/errors';
+import { useCreateChat } from 'src/hooks/useCreateChat';
 
 interface Props {
   open: boolean;
@@ -21,20 +23,47 @@ interface Props {
 }
 
 const ChatListAdd = ({ open, onClose }: Props) => {
-  const [isPrivate, setIsPrivate] = useState(true);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const [createChat] = useCreateChat();
+
+  const handleCreateChat = async () => {
+    if (!name && !isPrivate) {
+      setError('Chat name is required.');
+      return;
+    }
+
+    try {
+      await createChat({
+        variables: {
+          createChatInput: {
+            isPrivate,
+            name
+          }
+        }
+      });
+      handleClose();
+    } catch (error) {
+      setError(UNKNOWN_ERROR_MESSAGE);
+    }
+  };
+
+  const handleClose = () => {
+    setName('');
+    setIsPrivate(false);
+    onClose();
+  };
 
   return (
-    <Dialog open={open} onClose={onClose} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
+    <Dialog open={open} onClose={handleClose} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
       <DialogTitle id='alert-dialog-title' component='h2' variant='h6'>
         Add Chat
       </DialogTitle>
       <DialogContent sx={{ width: 400 }}>
         <Stack spacing={2}>
           <FormGroup>
-            <FormControlLabel
-              control={<Switch defaultChecked value={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} />}
-              label='Private'
-            />
+            <FormControlLabel control={<Switch value={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} />} label='Private' />
           </FormGroup>
           {isPrivate ? (
             <Paper sx={{ padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
@@ -44,9 +73,11 @@ const ChatListAdd = ({ open, onClose }: Props) => {
               </IconButton>
             </Paper>
           ) : (
-            <TextField label='Name' />
+            <TextField label='Name' value={name} onChange={(e) => setName(e.target.value)} error={!!error} helperText={error} />
           )}
-          <Button variant='outlined'>Save</Button>
+          <Button variant='outlined' onClick={handleCreateChat}>
+            Save
+          </Button>
         </Stack>
       </DialogContent>
     </Dialog>
