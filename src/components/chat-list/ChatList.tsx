@@ -17,7 +17,7 @@ const ChatList = () => {
         <Divider />
         <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', maxHeight: '80vh', overflow: 'auto' }}>
           {data?.chats?.map((chat) => (
-            <ChatListItem key={chat._id} name={chat.name || ''} />
+            <ChatListItem key={chat._id} chat={chat} />
           ))}
         </List>
       </Stack>
