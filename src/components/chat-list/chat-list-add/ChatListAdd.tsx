@@ -16,6 +16,7 @@ import {
 import { useState } from 'react';
 import { UNKNOWN_ERROR_MESSAGE } from 'src/constants/errors';
 import { useCreateChat } from 'src/hooks/useCreateChat';
+import router from 'src/router';
 
 interface Props {
   open: boolean;
@@ -35,7 +36,7 @@ const ChatListAdd = ({ open, onClose }: Props) => {
     }
 
     try {
-      await createChat({
+      const chat = await createChat({
         variables: {
           createChatInput: {
             isPrivate,
@@ -44,6 +45,7 @@ const ChatListAdd = ({ open, onClose }: Props) => {
         }
       });
       handleClose();
+      router.navigate(`/chats/${chat.data?.createChat._id}`);
     } catch (error) {
       setError(UNKNOWN_ERROR_MESSAGE);
     }

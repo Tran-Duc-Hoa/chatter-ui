@@ -11,13 +11,14 @@ import router from 'src/router';
 
 interface Props {
   chat: Chat;
+  selected: boolean;
 }
 
-const ChatListItem = ({ chat }: Props) => {
+const ChatListItem = ({ chat, selected }: Props) => {
   return (
     <>
       <ListItem alignItems='flex-start' disablePadding>
-        <ListItemButton onClick={() => router.navigate(`/chats/${chat._id}`)}>
+        <ListItemButton selected={selected} onClick={() => router.navigate(`/chats/${chat._id}`)}>
           <ListItemAvatar>
             <Avatar alt='Remy Sharp' src='/static/images/avatar/1.jpg' />
           </ListItemAvatar>
