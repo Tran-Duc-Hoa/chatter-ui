@@ -7,16 +7,18 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useCreateMessage } from 'src/hooks/useCreateMessage';
 import { useGetChat } from 'src/hooks/useGetChat';
 import { useGetMessages } from 'src/hooks/useGetMessages';
+import { useMessageCreated } from 'src/hooks/useMessageCreated';
 
 const Chat = () => {
   const params = useParams();
   const chatId = params._id || '';
   const [message, setMessage] = useState('');
   const { data } = useGetChat({ _id: chatId });
-  const [createMessage] = useCreateMessage(chatId);
+  const [createMessage] = useCreateMessage();
   const { data: messages } = useGetMessages({ chatId });
   const divRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
+  useMessageCreated({ chatId });
 
   useEffect(() => {
     setMessage('');
@@ -53,26 +55,29 @@ const Chat = () => {
     <Stack sx={{ height: '100%', justifyContent: 'space-between' }}>
       <h1>{data?.chat.name}</h1>
       <Box sx={{ maxHeight: '70vh', overflow: 'auto' }}>
-        {messages?.messages.map((message) => (
-          <Grid container alignItems='center' marginBottom='1rem'>
-            <Grid item xs={3} md={1}>
-              <Avatar src='' sx={{ width: 52, height: 52 }} />
-            </Grid>
-            <Grid item xs={9} md={11}>
-              <Stack>
-                <Paper sx={{ width: 'fit-content' }}>
-                  <Typography sx={{ padding: '0.9rem' }}>{message.content}</Typography>
-                </Paper>
-                <Typography variant='caption' sx={{ marginLeft: '0.25rem' }}>
-                  {dayjs(message.createdAt).format('HH:mm')}
-                </Typography>
-              </Stack>
-            </Grid>
-          </Grid>
-        ))}
+        {messages &&
+          [...messages.messages]
+            .sort((msgA, msgB) => new Date(msgA.createdAt).getTime() - new Date(msgB.createdAt).getTime())
+            .map((message) => (
+              <Grid container alignItems='center' marginBottom='1rem'>
+                <Grid item xs={2} lg={1}>
+                  <Avatar src='' sx={{ width: 52, height: 52 }} />
+                </Grid>
+                <Grid item xs={10} lg={11}>
+                  <Stack>
+                    <Paper sx={{ width: 'fit-content' }}>
+                      <Typography sx={{ padding: '0.9rem' }}>{message.content}</Typography>
+                    </Paper>
+                    <Typography variant='caption' sx={{ marginLeft: '0.25rem' }}>
+                      {dayjs(message.createdAt).format('HH:mm')}
+                    </Typography>
+                  </Stack>
+                </Grid>
+              </Grid>
+            ))}
         <div ref={divRef} />
       </Box>
-      <Paper sx={{ p: '2px 4px', display: 'flex', justifySelf: 'end', alignItems: 'center', width: '100%' }}>
+      <Paper sx={{ p: '2px 4px', display: 'flex', justifySelf: 'end', alignItems: 'center', width: '100%', margin: '1rem 0' }}>
         <InputBase
           sx={{ ml: 1, flex: 1, width: '100%' }}
           placeholder='Message'

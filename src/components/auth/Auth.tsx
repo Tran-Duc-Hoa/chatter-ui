@@ -23,7 +23,7 @@ const Auth = ({ children, submitLabel, onSubmit, error }: Props) => {
   }, [user, navigate]);
 
   return (
-    <Stack spacing={3} sx={{ height: '100vh', maxWidth: { xs: '70%', md: '50%' }, margin: '0 auto', justifyContent: 'center' }}>
+    <Stack spacing={3} sx={{ height: '100vh', maxWidth: '360px', margin: '0 auto', justifyContent: 'center' }}>
       <TextField type='email' label='Email' value={email} onChange={(e) => setEmail(e.target.value)} error={!!error} />
       <TextField
         type='password'
