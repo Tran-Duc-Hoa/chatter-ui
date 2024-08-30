@@ -1,18 +1,4 @@
-import SearchIcon from '@mui/icons-material/Search';
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  FormControlLabel,
-  FormGroup,
-  IconButton,
-  InputBase,
-  Paper,
-  Stack,
-  Switch,
-  TextField
-} from '@mui/material';
+import { Button, Dialog, DialogContent, DialogTitle, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
 import { UNKNOWN_ERROR_MESSAGE } from 'src/constants/errors';
 import { useCreateChat } from 'src/hooks/useCreateChat';
@@ -24,13 +10,12 @@ interface Props {
 }
 
 const ChatListAdd = ({ open, onClose }: Props) => {
-  const [isPrivate, setIsPrivate] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [createChat] = useCreateChat();
 
   const handleCreateChat = async () => {
-    if (!name && !isPrivate) {
+    if (!name) {
       setError('Chat name is required.');
       return;
     }
@@ -39,7 +24,6 @@ const ChatListAdd = ({ open, onClose }: Props) => {
       const chat = await createChat({
         variables: {
           createChatInput: {
-            isPrivate,
             name
           }
         }
@@ -53,7 +37,6 @@ const ChatListAdd = ({ open, onClose }: Props) => {
 
   const handleClose = () => {
     setName('');
-    setIsPrivate(false);
     onClose();
   };
 
@@ -64,19 +47,7 @@ const ChatListAdd = ({ open, onClose }: Props) => {
       </DialogTitle>
       <DialogContent sx={{ width: 400 }}>
         <Stack spacing={2}>
-          <FormGroup>
-            <FormControlLabel control={<Switch value={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} />} label='Private' />
-          </FormGroup>
-          {isPrivate ? (
-            <Paper sx={{ padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
-              <InputBase sx={{ ml: 1, flex: 1 }} placeholder='Search Users' />
-              <IconButton>
-                <SearchIcon />
-              </IconButton>
-            </Paper>
-          ) : (
-            <TextField label='Name' value={name} onChange={(e) => setName(e.target.value)} error={!!error} helperText={error} />
-          )}
+          <TextField label='Name' value={name} onChange={(e) => setName(e.target.value)} error={!!error} helperText={error} />
           <Button variant='outlined' onClick={handleCreateChat}>
             Save
           </Button>

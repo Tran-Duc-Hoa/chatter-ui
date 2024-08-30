@@ -7,7 +7,6 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useCreateMessage } from 'src/hooks/useCreateMessage';
 import { useGetChat } from 'src/hooks/useGetChat';
 import { useGetMessages } from 'src/hooks/useGetMessages';
-import { useMessageCreated } from 'src/hooks/useMessageCreated';
 
 const Chat = () => {
   const params = useParams();
@@ -18,7 +17,6 @@ const Chat = () => {
   const { data: messages } = useGetMessages({ chatId });
   const divRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
-  useMessageCreated({ chatId });
 
   useEffect(() => {
     setMessage('');

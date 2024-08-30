@@ -7,10 +7,11 @@ interface Props {
   children: ReactNode;
   submitLabel: string;
   error?: string;
+  extraFields?: ReactNode[];
   onSubmit: (credentials: { email: string; password: string }) => Promise<void>;
 }
 
-const Auth = ({ children, submitLabel, onSubmit, error }: Props) => {
+const Auth = ({ children, submitLabel, onSubmit, error, extraFields }: Props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { data: user } = useGetMe();
@@ -24,6 +25,7 @@ const Auth = ({ children, submitLabel, onSubmit, error }: Props) => {
 
   return (
     <Stack spacing={3} sx={{ height: '100vh', maxWidth: '360px', margin: '0 auto', justifyContent: 'center' }}>
+      {extraFields}
       <TextField type='email' label='Email' value={email} onChange={(e) => setEmail(e.target.value)} error={!!error} />
       <TextField
         type='password'

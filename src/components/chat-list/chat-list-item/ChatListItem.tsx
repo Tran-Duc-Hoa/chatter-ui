@@ -26,16 +26,16 @@ const ChatListItem = ({ chat, selected }: Props) => {
             primary={chat.name}
             secondary={
               <>
-                <Typography sx={{ display: 'inline' }} component='span' variant='body2' color='text.primary'>
-                  Ali Connors
+                <Typography sx={{ display: 'inline', mr: 1 }} component='span' variant='body2' color='text.primary'>
+                  {chat.latestMessage?.user.username || ''}
                 </Typography>
-                {" — I'll be in your neighborhood doing errands this…"}
+                {chat.latestMessage?.content}
               </>
             }
           />
         </ListItemButton>
       </ListItem>
-      <Divider variant='inset' component='li' />
+      <Divider variant='inset' />
     </>
   );
 };

@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client';
+import { updateLatestMessage } from 'src/cache/latest-mesage';
 import { updateMessages } from 'src/cache/messages';
 import { graphql } from 'src/gql';
 
@@ -15,6 +16,7 @@ const useCreateMessage = () => {
     update(cache, { data }) {
       if (data?.createMessage) {
         updateMessages(cache, data.createMessage);
+        updateLatestMessage(cache, data.createMessage);
       }
     }
   });
