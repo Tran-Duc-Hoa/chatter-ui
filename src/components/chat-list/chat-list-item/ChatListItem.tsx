@@ -1,5 +1,6 @@
 import { ListItemButton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -8,6 +9,7 @@ import Typography from '@mui/material/Typography';
 
 import { Chat } from 'src/gql/graphql';
 import router from 'src/router';
+import './chat-list-item.css';
 
 interface Props {
   chat: Chat;
@@ -25,12 +27,12 @@ const ChatListItem = ({ chat, selected }: Props) => {
           <ListItemText
             primary={chat.name}
             secondary={
-              <>
+              <Box sx={{ display: 'flex', flexDirection: 'row', gap: '0.5rem' }}>
                 <Typography sx={{ display: 'inline', mr: 1 }} component='span' variant='body2' color='text.primary'>
                   {chat.latestMessage?.user.username || ''}
                 </Typography>
-                {chat.latestMessage?.content}
-              </>
+                <div className='content'>{chat.latestMessage?.content}</div>
+              </Box>
             }
           />
         </ListItemButton>

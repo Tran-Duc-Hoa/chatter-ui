@@ -2,8 +2,11 @@ import SendIcon from '@mui/icons-material/Send';
 import { Avatar, Box, Divider, Grid, IconButton, InputBase, Paper, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
 import { useLocation, useParams } from 'react-router-dom';
 
+import { PAGE_SIZE } from 'src/constants/page-size';
+import { useCountMessages } from 'src/hooks/useCountMessages';
 import { useCreateMessage } from 'src/hooks/useCreateMessage';
 import { useGetChat } from 'src/hooks/useGetChat';
 import { useGetMessages } from 'src/hooks/useGetMessages';
@@ -14,13 +17,21 @@ const Chat = () => {
   const [message, setMessage] = useState('');
   const { data } = useGetChat({ _id: chatId });
   const [createMessage] = useCreateMessage();
-  const { data: messages } = useGetMessages({ chatId });
+  console.log('chatId', chatId);
+  const { data: messages, fetchMore } = useGetMessages({ chatId, skip: 0, limit: PAGE_SIZE });
   const divRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
+  const { messagesCount, countMessages } = useCountMessages(chatId);
 
   useEffect(() => {
-    setMessage('');
-    scrollToBottom();
+    countMessages();
+  }, [countMessages]);
+
+  useEffect(() => {
+    if (messages && messages.messages.length <= PAGE_SIZE) {
+      setMessage('');
+      scrollToBottom();
+    }
   }, [location, messages]);
 
   const scrollToBottom = () => {
@@ -53,27 +64,35 @@ const Chat = () => {
     <Stack sx={{ height: '100%', justifyContent: 'space-between' }}>
       <h1>{data?.chat.name}</h1>
       <Box sx={{ maxHeight: '70vh', overflow: 'auto' }}>
-        {messages &&
-          [...messages.messages]
-            .sort((msgA, msgB) => new Date(msgA.createdAt).getTime() - new Date(msgB.createdAt).getTime())
-            .map((message) => (
-              <Grid container alignItems='center' marginBottom='1rem'>
-                <Grid item xs={2} lg={1}>
-                  <Avatar src='' sx={{ width: 52, height: 52 }} />
+        <InfiniteScroll
+          pageStart={0}
+          isReverse
+          loadMore={() => fetchMore({ variables: { skip: messages?.messages.length, limit: PAGE_SIZE } })}
+          hasMore={messages && messagesCount ? messages.messages.length < messagesCount : false}
+          useWindow={false}
+        >
+          {messages &&
+            [...messages.messages]
+              .sort((msgA, msgB) => new Date(msgA.createdAt).getTime() - new Date(msgB.createdAt).getTime())
+              .map((message) => (
+                <Grid container alignItems='center' marginBottom='1rem'>
+                  <Grid item xs={2} lg={1}>
+                    <Avatar src='' sx={{ width: 52, height: 52 }} />
+                  </Grid>
+                  <Grid item xs={10} lg={11}>
+                    <Stack>
+                      <Paper sx={{ width: 'fit-content' }}>
+                        <Typography sx={{ padding: '0.9rem' }}>{message.content}</Typography>
+                      </Paper>
+                      <Typography variant='caption' sx={{ marginLeft: '0.25rem' }}>
+                        {dayjs(message.createdAt).format('HH:mm - MM/DD/YYYY')}
+                      </Typography>
+                    </Stack>
+                  </Grid>
                 </Grid>
-                <Grid item xs={10} lg={11}>
-                  <Stack>
-                    <Paper sx={{ width: 'fit-content' }}>
-                      <Typography sx={{ padding: '0.9rem' }}>{message.content}</Typography>
-                    </Paper>
-                    <Typography variant='caption' sx={{ marginLeft: '0.25rem' }}>
-                      {dayjs(message.createdAt).format('HH:mm')}
-                    </Typography>
-                  </Stack>
-                </Grid>
-              </Grid>
-            ))}
-        <div ref={divRef} />
+              ))}
+          <div ref={divRef} />
+        </InfiniteScroll>
       </Box>
       <Paper sx={{ p: '2px 4px', display: 'flex', justifySelf: 'end', alignItems: 'center', width: '100%', margin: '1rem 0' }}>
         <InputBase

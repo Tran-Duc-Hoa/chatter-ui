@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
@@ -39,14 +40,11 @@ const client = new ApolloClient({
         fields: {
           chats: {
             keyArgs: false,
-            merge(existing, incoming, { args }: any) {
-              const merged = existing ? existing.slice(0) : [];
-              for (let i = 0; i < incoming.length; i++) {
-                merged[args.skip + i] = incoming[i];
-              }
-
-              return merged;
-            }
+            merge
+          },
+          messages: {
+            keyArgs: ['chatId'],
+            merge
           }
         }
       }
@@ -54,5 +52,14 @@ const client = new ApolloClient({
   }),
   link: logoutLink.concat(splitLink)
 });
+
+function merge(existing: any, incoming: any, { args }: any) {
+  const merged = existing ? existing.slice(0) : [];
+  for (let i = 0; i < incoming.length; i++) {
+    merged[args.skip + i] = incoming[i];
+  }
+
+  return merged;
+}
 
 export default client;

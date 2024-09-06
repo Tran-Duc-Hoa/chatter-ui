@@ -8,7 +8,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/graphql': 'http://localhost:3000',
-      '/auth': 'http://localhost:3000'
+      '/auth': 'http://localhost:3000',
+      '/messages': 'http://localhost:3000'
     }
   },
   resolve: {
