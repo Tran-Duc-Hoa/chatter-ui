@@ -3,6 +3,7 @@ import Login from './components/auth/Login';
 import SignUp from './components/auth/Signup';
 import Chat from './components/chat/Chat';
 import Home from './components/home/Home';
+import Profile from './components/profile/Profile';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: '/chats/:_id',
     element: <Chat />
+  },
+  {
+    path: '/profile',
+    element: <Profile />
   }
 ]);
 

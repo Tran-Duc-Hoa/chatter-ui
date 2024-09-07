@@ -3,6 +3,7 @@ import { MouseEvent, useState } from 'react';
 import { UNKNOWN_ERROR_SNACK_MESSAGE } from 'src/constants/errors';
 import { snackVar } from 'src/constants/snack';
 import { useLogout } from 'src/hooks/useLogout';
+import router from 'src/router';
 import { onLogout } from 'src/utils/logout';
 
 const Settings = () => {
@@ -46,6 +47,9 @@ const Settings = () => {
         open={Boolean(anchorElUser)}
         onClose={() => setAnchorElUser(null)}
       >
+        <MenuItem key='profile' onClick={() => router.navigate('/profile')}>
+          <Typography textAlign='center'>Profile</Typography>
+        </MenuItem>
         <MenuItem key='logout' onClick={handleLogout}>
           <Typography textAlign='center'>Logout</Typography>
         </MenuItem>
