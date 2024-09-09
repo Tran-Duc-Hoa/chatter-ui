@@ -31,7 +31,7 @@ const Profile = () => {
   return (
     <Stack spacing={6} sx={{ marginTop: '2.5rem', alignItems: 'center', justifyContent: 'center' }}>
       <Typography variant='h1'>{data?.me.username}</Typography>
-      <Avatar sx={{ width: 256, height: 256 }} />
+      <Avatar sx={{ width: 256, height: 256 }} src={data?.me.imageUrl} />
       <Button component='label' variant='contained' size='large' startIcon={<UploadFile />}>
         Upload Image
         <input type='file' hidden onChange={handleUploadFile} />
