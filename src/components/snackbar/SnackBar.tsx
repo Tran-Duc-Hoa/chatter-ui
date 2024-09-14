@@ -7,7 +7,7 @@ import { snackVar } from 'src/constants/snack';
 export default function SimpleSnackbar() {
   const snack = useReactiveVar(snackVar);
 
-  const handleClose = (event: SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
+  const handleClose = (_event: SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
     if (reason === 'clickaway') {
       return;
     }
