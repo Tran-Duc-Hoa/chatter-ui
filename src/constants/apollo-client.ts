@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 
 import { onLogout } from 'src/utils/logout';
+import { getToken } from 'src/utils/token';
 import excludedRoutes from './excluded-routes';
 import { BACKEND_URL, WS_URL } from './urls';
 
@@ -17,10 +19,22 @@ const logoutLink = onError((error) => {
   }
 });
 
+const authLink = setContext((_, { headers }) => {
+  return {
+    headers: {
+      ...headers,
+      authorization: getToken()
+    }
+  };
+});
+
 const httpLink = new HttpLink({ uri: `${BACKEND_URL}/graphql` });
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: `ws://${WS_URL}/graphql`
+    url: `ws://${WS_URL}/graphql`,
+    connectionParams: {
+      token: getToken()
+    }
   })
 );
 
@@ -50,7 +64,7 @@ const client = new ApolloClient({
       }
     }
   }),
-  link: logoutLink.concat(splitLink)
+  link: logoutLink.concat(authLink).concat(splitLink)
 });
 
 function merge(existing: any, incoming: any, { args }: any) {
